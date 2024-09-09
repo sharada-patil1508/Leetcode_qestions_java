@@ -1,0 +1,773 @@
+1.
+Two strings str1 and str2 are called isomorphic if there is a one-to-one mapping possible for every character of str1 to every character of str2. And all occurrences of every character in ‘str1’ map to the same character in ‘str2’.
+
+Examples: 
+
+Input:  str1 = “aab”, str2 = “xxy”
+Output: True
+Explanation: ‘a’ is mapped to ‘x’ and ‘b’ is mapped to ‘y’.
+
+Input:  str1 = “aab”, str2 = “xyz”
+Output: False
+Explanation: One occurrence of ‘a’ in str1 has ‘x’ in str2 and other occurrence of ‘a’ has ‘y’.
+
+class Solution {
+    public boolean isIsomorphic(String s, String t) {
+        int[] indexS=new int[200];
+        int[] indexT=new int[200];
+
+        int len=s.length();
+
+        if(len!=t.length())
+        {
+            return false;
+        }
+        for(int i=0;i<len;i++)
+        {
+            if(indexS[s.charAt(i)]!=indexT[t.charAt(i)])
+            {
+                return false;
+            }
+
+            indexS[s.charAt(i)]=i+1;
+            indexT[t.charAt(i)]=i+1;
+        }
+        return true;
+        
+    }
+}
+
+//OR
+//USING HASH MAPS
+import java.util.HashMap;
+
+class Solution {
+    public boolean isIsomorphic(String s, String t) {
+        if (s.length() != t.length()) {
+            return false;
+        }
+        
+        HashMap<Character, Character> map = new HashMap<>();
+        HashMap<Character, Character> reverseMap = new HashMap<>();
+        
+        for (int i = 0; i < s.length(); i++) {
+            char charS = s.charAt(i);
+            char charT = t.charAt(i);
+            
+            if (map.containsKey(charS)) {
+                if (map.get(charS) != charT) {
+                    return false;
+                }
+            } else {
+                if (reverseMap.containsKey(charT)) {
+                    return false;
+                }
+                map.put(charS, charT);
+                reverseMap.put(charT, charS);
+            }
+        }
+        
+        return true;
+    }
+}
+
+
+
+2
+Length of the longest substring without repeating characters
+Last Updated : 15 Apr, 2024
+Given a string str, find the length of the longest substring without repeating characters. 
+
+Example:
+
+Example 1:
+Input: “ABCDEFGABEF”
+Output: 7
+Explanation: The longest substring without repeating characters are “ABCDEFG”, “BCDEFGA”, and “CDEFGAB” with lengths of 7
+
+Example 2:
+Input: “GEEKSFORGEEKS”
+Output: 7
+Explanation: The longest substrings without repeating characters are “EKSFORG” and “KSFORGE”, with lengths of 7
+
+
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int l = s.length();
+        int maxLength = 0;
+
+        for (int i = 0; i < l; i++) {
+            int count = 1; // Initialize count for the current substring
+            boolean[] visited = new boolean[256]; // Assuming ASCII characters
+            
+            visited[s.charAt(i)] = true; // Mark the current character as visited
+            
+            for (int j = i + 1; j < l; j++) {
+                if (visited[s.charAt(j)]) {
+                    break; // If the character is repeated, break the loop
+                } else {
+                    visited[s.charAt(j)] = true; // Mark the character as visited
+                    count++; // Increment count for each non-repeated character
+                }
+            }
+            
+            maxLength = Math.max(maxLength, count); // Update the maximum length
+        }
+        
+        return maxLength;
+    }
+}
+
+//OR
+import java.util.HashMap;
+
+public class LongestSubstring {
+
+    static int longestUniqueSubsttr(String str) {
+        int n = str.length();
+        int res = 0; // result
+        int i = 0;
+
+        // Creating a hash map to store the last positions of occurrence
+        HashMap<Character, Integer> lastIndex = new HashMap<>();
+
+        // Starting from the beginning of the string
+        for (int j = 0; j < n; j++) {
+            // If this character is seen before, then update i
+            if (lastIndex.containsKey(str.charAt(j))) {
+                i = Math.max(i, lastIndex.get(str.charAt(j)) + 1);
+            }
+
+            // Update result if needed
+            res = Math.max(res, j - i + 1);
+
+            // Update the last occurrence of the current character
+            lastIndex.put(str.charAt(j), j);
+        }
+        return res;
+    }
+
+    // Driver code
+    public static void main(String[] args) {
+        String str1 = "ABCDEFGABEF";
+        System.out.println("Length of the longest substring without repeating characters: " + longestUniqueSubsttr(str1));
+
+        String str2 = "GEEKSFORGEEKS";
+        System.out.println("Length of the longest substring without repeating characters: " + longestUniqueSubsttr(str2));
+    }
+}
+
+
+3
+class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+
+      int totallength=nums1.length+nums2.length;
+      int[] mergarray=new int[totallength];
+      int i=0,j=0,k=0;
+      while(i<nums1.length&&j<nums2.length)
+      {
+        if(nums1[i]<=nums2[j])
+        {
+            mergarray[k++]=nums1[i++];
+        }else
+        {
+            mergarray[k++]=nums2[j++];
+        }
+      }
+      while(i<nums1.length){
+        mergarray[k++]=nums1[i++];
+      }
+      while(j<nums2.length)
+      {
+        mergarray[k++]=nums2[j++];
+      }
+      if(totallength%2!=0)
+      {
+        return mergarray[totallength/2];
+      }else
+      {
+        int mid1=totallength/2;
+        int mid2=mid1-1;
+        return (mergarray[mid1]+mergarray[mid2])/2.0;
+      }
+
+
+    }
+}
+
+
+//EXPLANATION
+Initialize variables:
+totalLength will be 6 (length of nums1 + length of nums2).
+Create an array mergedArray of size 6 to hold the merged elements.
+Initialize i, j, and k to 0.
+Merge the arrays:
+Compare the elements at indices i and j of nums1 and nums2 respectively.
+Since nums1[i] (1) is less than nums2[j] (2), mergedArray[k] will be assigned nums1[i], and i will be incremented.
+Now, i = 1, j = 0, and k = 1.
+Repeat this process until one of the arrays is exhausted.
+After merging, mergedArray will be {1, 2, 3, 4, 5, 6}.
+Calculate the median:
+Since the total length is even (6), we need to take the average of the two middle elements.
+The two middle elements are at indices mid1 = 3 and mid2 = 2.
+mergedArray[mid1] is 4 and mergedArray[mid2] is 3.
+Median = (mergedArray[mid1] + mergedArray[mid2]) / 2.0 = (4 + 3) / 2.0 = 3.5.
+So, the median of the merged sorted arrays {1, 3, 5} and {2, 4, 6} is 3.5.s
+
+
+3.//linked list
+
+import java.util.*;
+public class linkedlist {
+    Node head;
+    static class Node{
+        int data;
+        Node next;
+        Node(int x)
+        {
+            data=x;
+            next=null;
+        }
+    }
+    public static linkedlist insert(linkedlist list,int data)
+    {
+        Node new_node=new Node(data);
+        if(list.head==null){
+            list.head=new_node;
+        }else
+        {
+            Node last=list.head;
+            while(last.next!=null)
+            {
+                last=last.next;
+            }
+            last.next=new_node;
+        }
+        return list;
+    }
+    public static void printlist(linkedlist list)
+    {
+        Node currnode=list.head;
+        System.out.print("linkedlist:");
+        while(currnode!=null)
+        {
+            System.out.print(currnode.data+" ");
+            currnode=currnode.next;
+        }
+    }
+    public static void main(String[] args) {
+       linkedlist  list=new linkedlist();
+       Scanner sc=new Scanner(System.in);
+       System.out.println("enter n:");
+       int n=sc.nextInt();
+       for(int i=0;i<n;i++)
+       {
+           int ele=sc.nextInt();
+           list=insert(list,ele);
+       }
+       printlist(list);
+    }
+}
+//OR
+import java.io.*;
+import java.util.*;
+
+class Node {
+	int data;
+	Node next;
+	Node(int d) {
+        data = d;
+        next = null;
+    }
+}
+
+class Solution {
+
+    public static  Node insert(Node head,int data) {
+        //Complete this method
+        
+        Node new_node=new Node(data);
+        if(head==null)
+        {
+          head=new_node;
+        }else{Node last=head;
+        while(last.next!=null)
+        {
+            last=last.next;
+        }
+        last.next=new_node;
+            
+        }
+        return head;
+    }
+
+	public static void display(Node head) {
+        Node start = head;
+        while(start != null) {
+            System.out.print(start.data + " ");
+            start = start.next;
+        }
+    }
+
+    public static void main(String args[]) {
+        Scanner sc = new Scanner(System.in);
+        Node head = null;
+        int N = sc.nextInt();
+
+        while(N-- > 0) {
+            int ele = sc.nextInt();
+            head = insert(head,ele);
+        }
+        display(head);
+        sc.close();
+    }
+}
+
+4.
+Two strings str1 and str2 are called isomorphic if there is a one-to-one mapping possible for every character of str1 to every character of str2. And all occurrences of every character in ‘str1’ map to the same character in ‘str2’.
+
+Examples: 
+
+Input:  str1 = “aab”, str2 = “xxy”
+Output: True
+Explanation: ‘a’ is mapped to ‘x’ and ‘b’ is mapped to ‘y’.
+
+Input:  str1 = “aab”, str2 = “xyz”
+Output: False
+Explanation: One occurrence of ‘a’ in str1 has ‘x’ in str2 and other occurrence of ‘a’ has ‘y’.
+
+class Solution {
+    public boolean isIsomorphic(String s, String t) {
+        int[] indexS=new int[200];
+        int[] indexT=new int[200];
+
+        int len=s.length();
+
+        if(len!=t.length())
+        {
+            return false;
+        }
+        for(int i=0;i<len;i++)
+        {
+            if(indexS[s.charAt(i)]!=indexT[t.charAt(i)])
+            {
+                return false;
+            }
+
+            indexS[s.charAt(i)]=i+1;
+            indexT[t.charAt(i)]=i+1;
+        }
+        return true;
+        
+    }
+}
+
+//OR
+//USING HASH MAPS
+import java.util.HashMap;
+
+class Solution {
+    public boolean isIsomorphic(String s, String t) {
+        if (s.length() != t.length()) {
+            return false;
+        }
+        
+        HashMap<Character, Character> map = new HashMap<>();
+        HashMap<Character, Character> reverseMap = new HashMap<>();
+        
+        for (int i = 0; i < s.length(); i++) {
+            char charS = s.charAt(i);
+            char charT = t.charAt(i);
+            
+            if (map.containsKey(charS)) {
+                if (map.get(charS) != charT) {
+                    return false;
+                }
+            } else {
+                if (reverseMap.containsKey(charT)) {
+                    return false;
+                }
+                map.put(charS, charT);
+                reverseMap.put(charT, charS);
+            }
+        }
+        
+        return true;
+    }
+}
+
+
+
+5
+Length of the longest substring without repeating characters
+Last Updated : 15 Apr, 2024
+Given a string str, find the length of the longest substring without repeating characters. 
+
+Example:
+
+Example 1:
+Input: “ABCDEFGABEF”
+Output: 7
+Explanation: The longest substring without repeating characters are “ABCDEFG”, “BCDEFGA”, and “CDEFGAB” with lengths of 7
+
+Example 2:
+Input: “GEEKSFORGEEKS”
+Output: 7
+Explanation: The longest substrings without repeating characters are “EKSFORG” and “KSFORGE”, with lengths of 7
+
+
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int l = s.length();
+        int maxLength = 0;
+
+        for (int i = 0; i < l; i++) {
+            int count = 1; // Initialize count for the current substring
+            boolean[] visited = new boolean[256]; // Assuming ASCII characters
+            
+            visited[s.charAt(i)] = true; // Mark the current character as visited
+            
+            for (int j = i + 1; j < l; j++) {
+                if (visited[s.charAt(j)]) {
+                    break; // If the character is repeated, break the loop
+                } else {
+                    visited[s.charAt(j)] = true; // Mark the character as visited
+                    count++; // Increment count for each non-repeated character
+                }
+            }
+            
+            maxLength = Math.max(maxLength, count); // Update the maximum length
+        }
+        
+        return maxLength;
+    }
+}
+
+//OR
+import java.util.HashMap;
+
+public class LongestSubstring {
+
+    static int longestUniqueSubsttr(String str) {
+        int n = str.length();
+        int res = 0; // result
+        int i = 0;
+
+        // Creating a hash map to store the last positions of occurrence
+        HashMap<Character, Integer> lastIndex = new HashMap<>();
+
+        // Starting from the beginning of the string
+        for (int j = 0; j < n; j++) {
+            // If this character is seen before, then update i
+            if (lastIndex.containsKey(str.charAt(j))) {
+                i = Math.max(i, lastIndex.get(str.charAt(j)) + 1);
+            }
+
+            // Update result if needed
+            res = Math.max(res, j - i + 1);
+
+            // Update the last occurrence of the current character
+            lastIndex.put(str.charAt(j), j);
+        }
+        return res;
+    }
+
+    // Driver code
+    public static void main(String[] args) {
+        String str1 = "ABCDEFGABEF";
+        System.out.println("Length of the longest substring without repeating characters: " + longestUniqueSubsttr(str1));
+
+        String str2 = "GEEKSFORGEEKS";
+        System.out.println("Length of the longest substring without repeating characters: " + longestUniqueSubsttr(str2));
+    }
+}
+
+
+6.
+package com.company;
+
+public class Applbubblesort1 {
+    public static void main(String[] args) {
+        int[] nums = {3, 4, 5, 2};
+        int maxProduct = maxProductAfterSubtraction(nums);
+        System.out.println(maxProduct);
+    }
+
+    static int maxProductAfterSubtraction(int[] nums) {
+        int maxProduct = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                int product = (nums[i] - 1) * (nums[j] - 1);
+
+//Comparison: Compares the calculated product with the current maxProduct. If it's greater, updates maxProduct.
+For the first iteration, maxProduct is updated from 0 to 6.
+It continues comparing and updating maxProduct for all other pairs.
+                if (product > maxProduct) {
+                    maxProduct = product;
+                }
+            }
+        }
+
+        return maxProduct;
+    }
+}
+
+//OUTPUT
+Input: nums = [3,4,5,2]
+Output: 12 
+Explanation: If you choose the indices i=1 and j=2 (indexed from 0), you will get the maximum value, that is, (nums[1]-1)*(nums[2]-1) = (4-1)*(5-1) = 3*4 = 12. 
+
+6
+package com.company;
+
+import java.util.Arrays;
+
+public class Rough {
+    public static void main(String[] args) {
+        int[] arr={1,2,0,7,0,8,5,0,-7};
+        bubblesort(arr);
+        System.out.println(Arrays.toString(arr));
+    }
+
+    static void bubblesort(int[] arr) {
+        // run the steps n-1 times
+        for (int i = 0; i < arr.length - 1; i++) {
+            // for each step, max item will come at the last respective index.
+            for (int j = 1; j < arr.length - i; j++) { // fixed the starting index here
+                // swap if the item is smaller than the previous item.
+                if(arr[j-1]==0) {
+                             // fixed the condition here
+                    int temp = arr[j];
+                    arr[j] = arr[j - 1];
+                    arr[j - 1] = temp;
+                }
+            }
+        }
+    }
+}
+//OUTPUT
+Example 1:
+
+Input: nums = [0,1,0,3,12]
+Output: [1,3,12,0,0]
+Example 2:
+
+Input: nums = [0]
+Output: [0]
+
+7
+class Solution {
+    public int bitwiseComplement(int n) {
+       if(n == 0) return 1;
+        int res = 0;
+        int fac = 1;
+        
+        while(n != 0){
+            res += fac * (n % 2 == 0 ? 1 : 0);
+            fac *= 2;
+            n /= 2;
+        }
+        return res;  
+    }
+}
+
+//expl
+We start by defining a class Solution with a method bitwiseComplement that takes an integer n. In this case, n is 5.
+
+java
+Copy code
+        while(n != 0){
+We enter a while loop because n is not equal to 0.
+
+java
+Copy code
+            res += fac * (n % 2 == 0 ? 1 : 0);
+For each iteration of the loop, we calculate the next bit of the complement. Since n is 5, n % 2 is 1 because 5 is odd. Therefore, (n % 2 == 0 ? 1 : 0) evaluates to 0. So, res += fac * 0 does not change res.
+
+java
+Copy code
+            fac *= 2;
+We update the factor fac to 2.
+
+java
+Copy code
+            n /= 2;
+We update n to n / 2, which is 5 / 2 = 2.
+
+java
+Copy code
+        }
+Since n is now 2 (which is not equal to 0), we go back to the start of the loop.
+
+java
+Copy code
+            res += fac * (n % 2 == 0 ? 1 : 0);
+Now, n is 2, and n % 2 is 0 because 2 is even. Therefore, (n % 2 == 0 ? 1 : 0) evaluates to 1. So, res += fac * 1 increments res by the current value of fac.
+
+java
+Copy code
+            fac *= 2;
+We update fac to 4.
+
+java
+Copy code
+            n /= 2;
+We update n to n / 2, which is 2 / 2 = 1.
+
+java
+Copy code
+        }
+Since n is now 1 (which is not equal to 0), we go back to the start of the loop.
+
+java
+Copy code
+            res += fac * (n % 2 == 0 ? 1 : 0);
+Now, n is 1, and n % 2 is 1 because 1 is odd. Therefore, (n % 2 == 0 ? 1 : 0) evaluates to 0. So, res += fac * 0 does not change res.
+
+java
+Copy code
+            fac *= 2;
+We update fac to 8.
+
+java
+Copy code
+            n /= 2;
+We update n to n / 2, which is 1 / 2 = 0.
+
+java
+Copy code
+        }
+Since n is now 0, the loop ends.
+
+java
+Copy code
+        return res;
+    }
+}
+Finally, we return the value of res, which represents the bitwise complement of 5. In this case, the bitwise complement of 5 is 2.
+
+
+
+
+
+//output
+xample 1:
+
+Input: n = 5
+Output: 2
+Explanation: 5 is "101" in binary, with complement "010" in binary, which is 2 in base-10.
+Example 2:
+
+Input: n = 7
+Output: 0
+Explanation: 7 is "111" in binary, with complement "000" in binary, which is 0 in base-10.
+
+8
+//merg sort
+package com.company;
+
+import java.util.Arrays;
+
+public class Rough {
+    public static void main(String[] args) {
+        int[] arr1 = {1, 2, 3, 0, 0, 0};
+        int[] arr2 = {2, 5, 6};
+        int m = 3;
+        int n = 3;
+        int[] result = merg(arr1, m, arr2, n);
+        System.out.println(Arrays.toString(result));
+    }
+
+    private static int[] merg(int[] first, int m, int[] second, int n) {
+        int[] mix = new int[m + n];
+        int i = 0;
+        int j = 0;
+        int k = 0;
+
+        while (i < m && j < n) {
+            if (first[i] < second[j]) {
+                mix[k] = first[i];
+                i++;
+            } else {
+                mix[k] = second[j];
+                j++;
+            }
+            k++;
+        }
+
+        // Copy remaining elements from the first array, if any
+        while (i < m) {
+            mix[k] = first[i];
+            i++;
+            k++;
+        }
+
+        // Copy remaining elements from the second array, if any
+        while (j < n) {
+            mix[k] = second[j];
+            j++;
+            k++;
+        }
+
+        return mix;
+    }
+}
+
+//OR
+class Solution {
+    public void merge(int[] first, int m, int[] second, int n) {
+        int i = m - 1; // Index of last element in first array
+        int j = n - 1; // Index of last element in second array
+        int k = m + n - 1; // Index of last element in merged array
+
+        while (i >= 0 && j >= 0) {
+            if (first[i] > second[j]) {
+                first[k] = first[i];
+                i--;
+            } else {
+                first[k] = second[j];
+                j--;
+            }
+            k--;
+        }
+
+        // If elements from second array are remaining
+        while (j >= 0) {
+            first[k] = second[j];
+            j--;
+            k--;
+        }
+    }
+}
+
+
+
+nput: nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3
+Output: [1,2,2,3,5,6]
+Explanation: The arrays we are merging are [1,2,3] and [2,5,6].
+The result of the merge is [1,2,2,3,5,6] with the underlined elements coming from nums1.
+Example 2:
+
+Input: nums1 = [1], m = 1, nums2 = [], n = 0
+Output: [1]
+Explanation: The arrays we are merging are [1] and [].
+The result of the merge is [1].
+
+9
+
+class Solution {
+    public int majorityElement(int[] nums) {
+        Arrays.sort(nums);
+        int n = nums.length;
+        return nums[n/2]; 
+    }
+}
+
+nput: nums = [3,2,3]
+Output: 3
+Example 2:
+
+Input: nums = [2,2,1,1,1,2,2]
+Output: 2
